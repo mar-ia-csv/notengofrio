@@ -1,19 +1,260 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  </title>No tengo frío</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      text-align: center;
-      margin-top: 15vh;
-      background: #f4f4f4;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>No tengo frío</title>
+<link rel="icon" type="image/png" href="favicon_snowflake.png">
+
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background: #f4f4f4;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+  }
+
+  section.panel {
+    min-height: 100vh;
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+
+  section.panel.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hero {
+    max-width: 90%;
+    border-radius: 12px;
+    margin: 20px 0;
+  }
+
+  iframe {
+    max-width: 800px;
+    width: 100%;
+    margin: auto;
+    display: block;
+  }
+
+  /* FAQ */
+  .faq {
+    max-width: 800px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .faq h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .faq details {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .faq summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .faq p {
+    margin-top: 10px;
+    color: #444;
+  }
+
+#snow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Oscurece MUY ligeramente el fondo para que se vean los copos */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2;
+  background: radial-gradient(circle at top, rgba(191, 213, 255, 0.08), rgba(0, 26, 175, 0.514)); /*rgba(191, 213, 255, 0.08), rgba(0, 91, 175, 0.438)*/
+
+  opacity: 0;                          /* empieza blanco */
+  transition: opacity 2000ms ease;     /* transición suave */
+}
+
+body.bg-on::before {
+  opacity: 1;
+}
+
+
+
+</style>
 </head>
+
 <body>
+<canvas id="snow"></canvas>
+
+
+<!-- BIENVENIDA -->
+<section class="panel">
   <h1>👋 Bienvenidx</h1>
   <p>No, no tengo frío!</p>
+</section>
+
+<!-- FAQ -->
+<section class="panel">
+  <div class="faq">
+    <h2>❓ Preguntas frecuentes (FAQ) </h2>
+
+    <details>
+      <summary>¿Hace mucho que no tienes frío?</summary>
+      <p>Todas mis terminaciones nerviosas están intactas. Algunas veces he notado eso del frío. Si has sido obsequiad</p>
+    </details>
+
+    <details>
+      <summary>¿Cuánto tiempo se tarda en responder?</summary>
+      <p>Menos de un minuto. Son solo unas pocas preguntas.</p>
+    </details>
+
+    <details>
+      <summary>¿Necesito tener cuenta de Google?</summary>
+      <p>No. Puedes responder sin iniciar sesión.</p>
+    </details>
+
+    <details>
+      <summary>¿Puedo responder más de una vez?</summary>
+      <p>Recomendamos responder una sola vez para que los resultados sean fiables.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ENCUESTA -->
+<section class="panel">
+  <h1>📝 Tu opinión importa</h1>
+
+  <img src="images/portada.jpg" class="hero">
+
+  <p>Responde esta breve encuesta. Es anónima.</p>
+
+  <iframe
+    src="https://docs.google.com/forms/d/e/TU_FORM_ID/viewform?embedded=true"
+    height="800"
+    frameborder="0">
+  </iframe>
+</section>
+
+<script>
+  const panels = document.querySelectorAll('.panel');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.2
+  });
+
+  panels.forEach(panel => observer.observe(panel));
+</script>
+
+
+
+// animacion nieve
+<script>
+  const canvas = document.getElementById('snow');
+  const ctx = canvas.getContext('2d', { alpha: true });
+
+  let w = 0, h = 0, dpr = 1;
+
+  function resize() {
+    dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1)); // limita para rendimiento
+    w = window.innerWidth;
+    h = window.innerHeight;
+
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // coordenadas en px “normales”
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  const COUNT = Math.round((w * h) / 22000); // densidad proporcional
+  const flakes = Array.from({ length: Math.max(50, Math.min(140, COUNT)) }, () => makeFlake(true));
+
+  function makeFlake(randomY = false) {
+    return {
+      x: Math.random() * w,
+      y: randomY ? Math.random() * h : -10 - Math.random() * 80,
+      r: 1 + Math.random() * 2.6,
+      vy: 0.6 + Math.random() * 1.2,      // velocidad vertical
+      vx: -0.3 + Math.random() * 0.6,     // deriva horizontal
+      phase: Math.random() * Math.PI * 2, // para el balanceo
+      spin: 0.01 + Math.random() * 0.02   // “balanceo” suave
+    };
+  }
+
+  function step() {
+    ctx.clearRect(0, 0, w, h);
+
+    // Copos con sombra para contraste
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.shadowColor = 'rgba(0,0,0,0.25)';
+    ctx.shadowBlur = 6;
+
+    for (const f of flakes) {
+      f.phase += f.spin;
+      const sway = Math.sin(f.phase) * 0.6;
+
+      f.y += f.vy;
+      f.x += f.vx + sway;
+
+      // dibuja
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // recicla
+      if (f.y > h + 20) {
+        Object.assign(f, makeFlake(false));
+        f.x = Math.random() * w;
+      }
+      if (f.x < -30) f.x = w + 30;
+      if (f.x > w + 30) f.x = -30;
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  step();
+</script>
+
+<script>
+  window.addEventListener('load', () => {
+    requestAnimationFrame(() => {
+      document.body.classList.add('bg-on');
+    });
+  });
+</script>
+
+
 </body>
 </html>
