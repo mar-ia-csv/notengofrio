@@ -5,7 +5,9 @@
 <title>No tengo frío</title>
 <link rel="icon" type="image/png" href="favicon_snowflake.png">
 
+
 <style>
+
   body {
     font-family: system-ui, sans-serif;
     background: #f4f4f4;
@@ -89,7 +91,7 @@ body::before {
   inset: 0;
   pointer-events: none;
   z-index: -2;
-  background: radial-gradient(circle at top, rgba(191, 213, 255, 0.08), rgba(0, 26, 175, 0.514)); /*rgba(191, 213, 255, 0.08), rgba(0, 91, 175, 0.438)*/
+  background: radial-gradient(circle at top, rgba(191, 213, 255, 0.08), rgba(4, 38, 102, 0.637)); /*rgba(191, 213, 255, 0.08), rgba(0, 91, 175, 0.438)*/ /* rgba(191, 213, 255, 0.08), rgba(0, 26, 175, 0.514))*/
 
   opacity: 0;                          /* empieza blanco */
   transition: opacity 2000ms ease;     /* transición suave */
@@ -110,8 +112,10 @@ body.bg-on::before {
 
 <!-- BIENVENIDA -->
 <section class="panel">
-  <h1>👋 Bienvenidx</h1>
-  <p>No, no tengo frío!</p>
+
+  <img src="images/image.png" class="hero">
+  <!-- <p>A webpage by cold-less me</p> -->
+
 </section>
 
 <!-- FAQ -->
@@ -120,8 +124,18 @@ body.bg-on::before {
     <h2>❓ Preguntas frecuentes (FAQ) </h2>
 
     <details>
+      <summary>¿Tienes frío?</summary>
+      <p>No </p>
+    </details>
+
+    <details>
+      <summary>¿Seguro?</summary>
+      <p>Sí </p>
+    </details>
+
+    <details>
       <summary>¿Hace mucho que no tienes frío?</summary>
-      <p>Todas mis terminaciones nerviosas están intactas.</p>
+      <p>Todas mis terminaciones nerviosas están intactas. Por tanto, a veces sí he tenido fresquito. Pero no mucho. Aunque veces me hago la dura. Pero sólo un poco. </p>
     </details>
 
     <details>
@@ -135,8 +149,8 @@ body.bg-on::before {
     </details>
 
     <details>
-      <summary>¿Puedo responder más de una vez?</summary>
-      <p>Recomendamos responder una sola vez para que los resultados sean fiables.</p>
+      <summary>Pero... ¡El frío resfría!</summary>
+      <a> No. Sé un ciudadano informado gracias a </a> <a href="https://riberasalud.com/blog-de-salud/desmontando-el-mito-el-frio-realmente-nos-enferma-consejos-para-un-invierno-saludable/" target="_blank">este link.</a>
     </details>
   </div>
 </section>
@@ -144,8 +158,6 @@ body.bg-on::before {
 <!-- ENCUESTA -->
 <section class="panel">
   <h1>📝 Tu opinión importa</h1>
-
-  <img src="images/portada.jpg" class="hero">
 
   <p>Responde esta breve encuesta. Es anónima.</p>
 
@@ -258,4 +270,3 @@ body.bg-on::before {
 
 </body>
 </html>
-
